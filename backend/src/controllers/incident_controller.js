@@ -14,11 +14,11 @@ module.exports = {
             .join('ngos', 'ngos.id', '=', 'incidents.ngo_id')
             .limit(5)
             .offset((page - 1) * 5)
-            .select(['incidents.*', 'ngos.name', 'ngos.whatsapp', 'ngos.city', 'ngos.uf']);
-        
+            .select(['incidents.*', 'ngos.name', 'ngos.whatsapp', 'ngos.email', 'ngos.city', 'ngos.uf']);
+
         // Creates a header to returns the total number of incidents
         response.header('X-Total-Count', count['count(*)']);
-        
+
         // Returns the incidents and the total number of incidents
         return response.json(incidents);
     },
@@ -55,13 +55,13 @@ module.exports = {
         const incident = await connection('incidents').where('id', id).select('ngo_id').first();
 
         // Verifies if the incident exists
-        if(!incident) {
+        if (!incident) {
             // If not, returns an error
             return response.status(404).json({ error: 'This incident does not exist' });
         }
 
         // Verifies if the NGO logged owns the incident to be deleted
-        if(incident.ngo_id !== ngo_id) {
+        if (incident.ngo_id !== ngo_id) {
             // If not, returns an error
             return response.status(401).json({ error: 'Operation not permitted.' });
         }
