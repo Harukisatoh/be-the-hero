@@ -1,4 +1,4 @@
-const connection = require('../database/connection');
+const dbConnection = require('../database/connection');
 
 module.exports = {
     // Function called when you want to login
@@ -7,10 +7,10 @@ module.exports = {
         const { id } = request.body;
 
         // Gets the NGO with the given id
-        const ngo = await connection('ngos').where('id', id).select('name').first();
+        const ngo = await dbConnection('ngos').where('id', id).select('name').first();
 
         // Verifies if the NGO exists
-        if(!ngo) {
+        if (!ngo) {
             // If not, returns an error
             return response.status(400).json({ error: 'No NGO found with this ID' });
         }

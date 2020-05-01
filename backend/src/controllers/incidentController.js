@@ -1,4 +1,4 @@
-const connection = require('../database/connection');
+const dbConnection = require('../database/connection');
 
 module.exports = {
     // Function called when you want to list every incident in the database
@@ -7,14 +7,14 @@ module.exports = {
         const { page = 1 } = request.query;
 
         // Counts every incident in the database
-        const [count] = await connection('incidents').count();
+        const [count] = await dbConnection('incidents').count();
 
-        // Returns 5 results according to the page searched
-        const incidents = await connection('incidents')
+        // Returns 6 results according to the page searched
+        const incidents = await dbConnection('incidents')
             .join('ngos', 'ngos.id', '=', 'incidents.ngo_id')
-            .limit(5)
-            .offset((page - 1) * 5)
-            .select(['incidents.*', 'ngos.name', 'ngos.whatsapp', 'ngos.email', 'ngos.city', 'ngos.uf']);
+            .limit(6)
+            .offset((page - 1) * 6)
+            .select(['incidents.*', 'ngos.name', 'ngos.whatsapp', 'ngos.email', 'ngos.city', 'ngos.state']);
 
         // Creates a header to returns the total number of incidents
         response.header('X-Total-Count', count['count(*)']);
@@ -32,7 +32,7 @@ module.exports = {
         const { title, description, value } = request.body;
 
         // Inserts the new incident and gets the id from it
-        const [id] = await connection('incidents').insert({
+        const [id] = await dbConnection('incidents').insert({
             title,
             description,
             value,
@@ -52,7 +52,7 @@ module.exports = {
         const ngo_id = request.headers.authorization;
 
         // Gets the incident corresponding to the id passed on the URL
-        const incident = await connection('incidents').where('id', id).select('ngo_id').first();
+        const incident = await dbConnection('incidents').where('id', id).select('ngo_id').first();
 
         // Verifies if the incident exists
         if (!incident) {
@@ -67,7 +67,7 @@ module.exports = {
         }
 
         // If yes, deletes the incident from database
-        await connection('incidents').where('id', id).delete();
+        await dbConnection('incidents').where('id', id).delete();
 
         // And returns a response with an empty body
         return response.status(204).send();

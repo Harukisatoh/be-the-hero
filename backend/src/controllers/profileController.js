@@ -1,4 +1,4 @@
-const connection = require('../database/connection');
+const dbConnection = require('../database/connection');
 
 module.exports = {
     // Function called when you want to list every incident from a NGO
@@ -10,12 +10,12 @@ module.exports = {
         const ngo_id = request.headers.authorization;
 
         // Counts every case in the database
-        const [count] = await connection('incidents').where('ngo_id', ngo_id).count();
+        const [count] = await dbConnection('incidents').where('ngo_id', ngo_id).count();
 
-        // Returns 5 results according to the page searched
-        const incidents = await connection('incidents')
-            .limit(5)
-            .offset((page - 1) * 5)
+        // Returns 6 results according to the page searched
+        const incidents = await dbConnection('incidents')
+            .limit(6)
+            .offset((page - 1) * 6)
             .where('ngo_id', ngo_id)
             .select('*');
 

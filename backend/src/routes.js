@@ -1,21 +1,30 @@
 const express = require('express');
-const ngo_controller = require('./controllers/ngo_controller');
-const incident_controller = require('./controllers/incident_controller');
-const profile_controller = require('./controllers/profile_controller');
-const session_controller = require('./controllers/session_controller');
 
+// Controllers
+const ngoController = require('./controllers/ngoController');
+const incidentController = require('./controllers/incidentController');
+const profileController = require('./controllers/profileController');
+const sessionController = require('./controllers/sessionController');
+
+// Validators, just to check inputs from frontend and mobile
+const sessionValidator = require('../src/validators/sessionValidator');
+const ngoValidator = require('../src/validators/ngoValidator');
+const profileValidator = require('../src/validators/profileValidator');
+const incidentValidator = require('../src/validators/incidentValidator');
+
+// Express router instance
 const routes = express.Router();
 
+// Routes
+routes.post('/sessions', sessionValidator, sessionController.create); // Route called when you want to login
 
-routes.post('/sessions', session_controller.create); // Route called when you want to login
+routes.get('/ngos', ngoController.index); // Route called when you want to list every NGO in the database
+routes.post('/ngos', ngoValidator, ngoController.create); // Route called when you want to create a new NGO
 
-routes.get('/ngos', ngo_controller.index); // Route called when you want to list every NGO in the database
-routes.post('/ngos', ngo_controller.create); // Route called when you want to create a new NGO
+routes.get('/profile', profileValidator, profileController.index); // Route called when you want to list every incident from a NGO
 
-routes.get('/profile', profile_controller.index); // Route called when you want to list every incident from a NGO
-
-routes.get('/incidents', incident_controller.index); // Route called when you want to list every incident in the database
-routes.post('/incidents', incident_controller.create); // Route called when you want to create a new incident
-routes.delete('/incidents/:id', incident_controller.delete); // Route called when you want to delete an incident from the database
+routes.get('/incidents', incidentValidator.get, incidentController.index); // Route called when you want to list every incident in the database
+routes.post('/incidents', incidentValidator.post, incidentController.create); // Route called when you want to create a new incident
+routes.delete('/incidents/:id', incidentValidator.delete, incidentController.delete); // Route called when you want to delete an incident from the database
 
 module.exports = routes;
