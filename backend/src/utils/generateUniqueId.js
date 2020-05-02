@@ -10,6 +10,6 @@ module.exports = async function generateUniqueId() {
   if (sameIdNGOs.length == 0) {
     return id;
   } else {
-    return generateUniqueId();
+    return await generateUniqueId();
   }
 }
